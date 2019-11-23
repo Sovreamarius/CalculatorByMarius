@@ -33,7 +33,7 @@ namespace CalculatorByMarius
         private void NumbersEvent(object sender, EventArgs e)
         {
             Button btn = (Button) sender;
-
+            //
             if (TxtDisplay.Text == "0" || enter_value)
                 TxtDisplay.Clear();
 
