@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CalculatorByMarius
 {
     /// <summary>
-    /// Calculator project from Dani, created by Marius S.
+    /// Basic calculator project - Marius S.
     /// </summary>
     public partial class Calculator : Form
     {
+        Double result = 0;
+        Double lastResult = 0;
+        string lastLbDisplay = "";
+        String operation = "";
+        bool enter_value = false;
+
         #region Constructor
         /// <summary>
         /// Default constructor
@@ -24,232 +23,180 @@ namespace CalculatorByMarius
             InitializeComponent();
         }
         #endregion
-
-        #region Methods for cleaning buttons
-
+        
         /// <summary>
-        /// Clear the input text
+        /// Event that happens when a number button is clicked
+        /// Inserts a number into the equation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CEButton_Click(object sender, EventArgs e)
+        private void NumbersEvent(object sender, EventArgs e)
         {
-            this.Input.Text = string.Empty;
-            FocusInput();
-        }
+            Button btn = (Button) sender;
 
+            if (TxtDisplay.Text == "0" || enter_value)
+                TxtDisplay.Clear();
 
-        private void CButton_Click(object sender, EventArgs e)
-        {
-            FocusInput();
+            TxtDisplay.Text += btn.Text;
+            enter_value = false;
         }
 
         /// <summary>
-        /// 
+        /// Event that happens when a operator button is clicked
+        /// Inserts a operator to the equation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BackspaceButton_Click(object sender, EventArgs e)
+        private void OperatorsEvent(object sender, EventArgs e)
         {
-            DeleteInput();
-            FocusInput();
+            enter_value = true;
+            Button btn = (Button)sender;
+            string newOperand = btn.Text;
+
+            LbResult.Text = LbResult.Text + " " + TxtDisplay.Text + " " + newOperand;
+            //save last label display
+            lastLbDisplay = LbResult.Text;
+
+            switch (operation)
+            {
+                case "+": TxtDisplay.Text = (result + Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "-": TxtDisplay.Text = (result - Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "x": TxtDisplay.Text = (result * Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "/": TxtDisplay.Text = (result / Double.Parse(TxtDisplay.Text)).ToString(); break;
+                default: break;
+            }
+
+            result = Double.Parse(TxtDisplay.Text);
+
+            // save last result
+            lastResult = result;
+
+
+            operation = newOperand;
+
+            ResetLabelResult();
         }
-
-        #endregion
-
-        #region Methods for operation buttons
-
+        
         /// <summary>
-        /// Adds "/" operator to the input text
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DivisionButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("/");
-            FocusInput();
-        }
-
-        /// <summary>
-        /// Adds "*" operator to the input text
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MultiplyButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("*");
-            FocusInput();
-        }
-
-        /// <summary>
-        /// Adds "-" operator to the input text
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MinusButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("-");
-            FocusInput();
-        }
-
-        /// <summary>
-        /// Adds "+" operator to the input text
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PlusButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("+");
-            FocusInput();
-        }
-
-        /// <summary>
-        /// Adds "." to the input text
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DotButton_Click(object sender, EventArgs e)
-        {
-            InsertValue(".");
-            FocusInput();
-        }
-
-        /// <summary>
-        /// Calculates the equation from the input text
+        /// Calculates the result of the equation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EqualButton_Click(object sender, EventArgs e)
         {
-            CalculateTheResult();
-            FocusInput();
+           LbResult.Text = "";
+            enter_value = true;
+
+            switch (operation)
+            {
+                case "+":
+                    TxtDisplay.Text = (result + Double.Parse(TxtDisplay.Text)).ToString();
+                    break;
+                case "-":
+                    TxtDisplay.Text = (result - Double.Parse(TxtDisplay.Text)).ToString();
+                    break;
+                case "x":
+                    TxtDisplay.Text = (result * Double.Parse(TxtDisplay.Text)).ToString();
+                    break;
+                case "/":
+                    TxtDisplay.Text = (result / Double.Parse(TxtDisplay.Text)).ToString();
+                    break;
+
+                default:
+                    break;
+            }
+            result = Double.Parse(TxtDisplay.Text);
+            TxtDisplay.Text = result.ToString();
+            result = 0;
+            operation = "";
         }
 
         /// <summary>
-        /// Sends the equation back to one operation
+        /// Clears the displayed number
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CEButton_Click(object sender, EventArgs e)
+        {
+            TxtDisplay.Text = "0";
+        }
+
+        /// <summary>
+        /// Clears the entire calculator
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CButton_Click(object sender, EventArgs e)
+        {
+            TxtDisplay.Text = "0";
+            result = 0;
+            operation = "";
+            LbResult.Text = "";
+        }
+
+        /// <summary>
+        /// Removes the last number from the displayed text 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BackspaceButton_Click(object sender, EventArgs e)
+        {
+            if (TxtDisplay.Text.Length > 0)
+            {
+                TxtDisplay.Text = TxtDisplay.Text.Remove(TxtDisplay.Text.Length - 1, 1);
+            }
+
+            if (TxtDisplay.Text == "")
+            {
+                TxtDisplay.Text = "0";
+            }
+        }
+
+        /// <summary>
+        /// Handling decimals for equation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DotButton_Click(object sender, EventArgs e)
+        {
+            if (!enter_value && !TxtDisplay.Text.Contains("."))
+            {
+                TxtDisplay.Text += ".";
+            }
+            else if (enter_value)
+            {
+                TxtDisplay.Text = "0";
+            }
+
+            if (!TxtDisplay.Text.Contains("."))
+            {
+                TxtDisplay.Text += ".";
+            }
+
+            enter_value = false;
+        }
+
+        /// <summary>
+        /// Sends the equation one step back, sets the previous result and displayed equation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void UndoButton_Click(object sender, EventArgs e)
         {
-            FocusInput();
-        }
 
-        #endregion
-
-        #region Methods for numbers buttons
-
-        private void SevenButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("7");
-            FocusInput();
-        }
-
-        private void EightButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("8");
-            FocusInput();
-        }
-
-        private void NineButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("9");
-            FocusInput();
-        }
-
-        private void FourButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("4");
-            FocusInput();
-        }
-
-        private void FiveButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("5");
-            FocusInput();
-        }
-
-        private void SixButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("6");
-            FocusInput();
-        }
-
-        private void OneButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("1");
-            FocusInput();
-        }
-
-        private void TwoButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("2");
-            FocusInput();
-        }
-
-        private void ThreeButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("3");
-            FocusInput();
-        }
-
-        private void NullButton_Click(object sender, EventArgs e)
-        {
-            InsertValue("0");
-            FocusInput();
-        }
-        #endregion
-
-        #region Helpful private methods
-
-        /// <summary>
-        ///
-        /// </summary>
-        private void FocusInput()
-        {
-            this.Input.Focus();
         }
 
         /// <summary>
-        /// Inserts a value in the input text
+        /// Reset the displayed history label when it gets too long
         /// </summary>
-        /// <param name="s"></param>
-        private void InsertValue(string s)
+        private void ResetLabelResult()
         {
-            var selectionStart = this.Input.SelectionStart;
-
-            this.Input.Text = this.Input.Text.Insert(this.Input.SelectionStart, s);
-
-            this.Input.SelectionStart = selectionStart + s.Length;
-
-            this.Input.SelectionLength = 0;
+            if (LbResult.Text.Length > 52)
+            {
+                LbResult.Text = "";
+            }
         }
 
-        /// <summary>
-        /// Deletes the value from the input text that is set after the cursor
-        /// </summary>
-        private void DeleteInput()
-        {
-            if (this.Input.Text.Length < this.Input.SelectionStart + 1)
-                return;
-
-            var selectionStart = this.Input.SelectionStart;
-           
-            this.Input.Text = this.Input.Text.Remove(this.Input.SelectionStart, 1);
-
-            this.Input.SelectionStart = selectionStart;
-
-            this.Input.SelectionLength = 0;
-        }
-
-        /// <summary>
-        /// Calculates the result of the equation
-        /// </summary>
-        private void CalculateTheResult()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+     
     }
 }
