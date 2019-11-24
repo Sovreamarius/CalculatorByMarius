@@ -395,6 +395,8 @@
             this.KeyPreview = true;
             this.Name = "Calculator";
             this.Text = "Calculator";
+            this.Load += new System.EventHandler(this.Calculator_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Calculator_KeyDown);
             this.Panel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
