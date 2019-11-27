@@ -8,12 +8,11 @@ namespace CalculatorByMarius
     /// </summary>
     public partial class Calculator : Form
     {
-        //global variables
-        Double result = 0; // used to store the result of the equation
-        Double lastResult = 0; // need work - in Undo action
-        string lastLbDisplay = ""; //need work - in Undo action
-        String operation = ""; //used to determine if an operator was inserted
-        bool enter_value = false; //used to determine if a value was inserted
+        Double _result = 0; // used to store the result of the equation
+        Double _lastResult = 0; // need work - in Undo action
+        string _lastLbDisplay = ""; //need work - in Undo action
+        String _operation = ""; //used to determine if an operator was inserted
+        bool _entered_value = false; //used to determine if a value was inserted
 
         #region Constructor
         /// <summary>
@@ -134,12 +133,12 @@ namespace CalculatorByMarius
         private void NumbersEvent(object sender, EventArgs e)
         {
             Button btn = (Button) sender;
-            //
-            if (TxtDisplay.Text == "0" || enter_value)
+            
+            if (TxtDisplay.Text == "0" || _entered_value)
                 TxtDisplay.Clear();
 
             TxtDisplay.Text += btn.Text;
-            enter_value = false;
+            _entered_value = false;
         }
 
         /// <summary>
@@ -150,28 +149,28 @@ namespace CalculatorByMarius
         /// <param name="e"></param>
         private void OperatorsEvent(object sender, EventArgs e)
         {
-            enter_value = true;
+            _entered_value = true;
             Button btn = (Button)sender;
             string newOperand = btn.Text;
 
             LbResult.Text = LbResult.Text + " " + TxtDisplay.Text + " " + newOperand;
             //save last label display
-            lastLbDisplay = LbResult.Text;
+            _lastLbDisplay = LbResult.Text;
 
-            switch (operation)
+            switch (_operation)
             {
-                case "+": TxtDisplay.Text = (result + Double.Parse(TxtDisplay.Text)).ToString(); break;
-                case "-": TxtDisplay.Text = (result - Double.Parse(TxtDisplay.Text)).ToString(); break;
-                case "x": TxtDisplay.Text = (result * Double.Parse(TxtDisplay.Text)).ToString(); break;
-                case "/": TxtDisplay.Text = (result / Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "+": TxtDisplay.Text = (_result + Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "-": TxtDisplay.Text = (_result - Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "x": TxtDisplay.Text = (_result * Double.Parse(TxtDisplay.Text)).ToString(); break;
+                case "/": TxtDisplay.Text = (_result / Double.Parse(TxtDisplay.Text)).ToString(); break;
                 default: break;
             }
 
-            result = Double.Parse(TxtDisplay.Text);
+            _result = Double.Parse(TxtDisplay.Text);
             // save last result 
-            lastResult = result;
+            _lastResult = _result;
 
-            operation = newOperand;
+            _operation = newOperand;
 
             //reset label result when it is too large
             ResetLabelResult();
@@ -184,11 +183,11 @@ namespace CalculatorByMarius
         /// <param name="e"></param>
         private void DotButton_Click(object sender, EventArgs e)
         {
-            if (!enter_value && !TxtDisplay.Text.Contains("."))
+            if (!_entered_value && !TxtDisplay.Text.Contains("."))
             {
                 TxtDisplay.Text += ".";
             }
-            else if (enter_value)
+            else if (_entered_value)
             {
                 TxtDisplay.Text = "0";
             }
@@ -198,7 +197,7 @@ namespace CalculatorByMarius
                 TxtDisplay.Text += ".";
             }
 
-            enter_value = false;
+            _entered_value = false;
         }
 
         #endregion
@@ -213,30 +212,30 @@ namespace CalculatorByMarius
         private void EqualButton_Click(object sender, EventArgs e)
         {
            LbResult.Text = "";
-            enter_value = true;
+            _entered_value = true;
 
-            switch (operation)
+            switch (_operation)
             {
                 case "+":
-                    TxtDisplay.Text = (result + Double.Parse(TxtDisplay.Text)).ToString();
+                    TxtDisplay.Text = (_result + Double.Parse(TxtDisplay.Text)).ToString();
                     break;
                 case "-":
-                    TxtDisplay.Text = (result - Double.Parse(TxtDisplay.Text)).ToString();
+                    TxtDisplay.Text = (_result - Double.Parse(TxtDisplay.Text)).ToString();
                     break;
                 case "x":
-                    TxtDisplay.Text = (result * Double.Parse(TxtDisplay.Text)).ToString();
+                    TxtDisplay.Text = (_result * Double.Parse(TxtDisplay.Text)).ToString();
                     break;
                 case "/":
-                    TxtDisplay.Text = (result / Double.Parse(TxtDisplay.Text)).ToString();
+                    TxtDisplay.Text = (_result / Double.Parse(TxtDisplay.Text)).ToString();
                     break;
 
                 default:
                     break;
             }
-            result = Double.Parse(TxtDisplay.Text);
-            TxtDisplay.Text = result.ToString();
-            result = 0;
-            operation = "";
+            _result = Double.Parse(TxtDisplay.Text);
+            TxtDisplay.Text = _result.ToString();
+            _result = 0;
+            _operation = "";
         }
 
         /// <summary>
@@ -257,8 +256,8 @@ namespace CalculatorByMarius
         private void CButton_Click(object sender, EventArgs e)
         {
             TxtDisplay.Text = "0";
-            result = 0;
-            operation = "";
+            _result = 0;
+            _operation = "";
             LbResult.Text = "";
         }
 
