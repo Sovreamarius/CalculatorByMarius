@@ -10,15 +10,15 @@ namespace CalculatorByMarius
     {
         Double _result = 0; // used to store the result of the equation
         Double _lastResult = 0; // need work - in Undo action
-        string _lastLbDisplay = ""; //need work - in Undo action
-        String _operation = ""; //used to determine if an operator was inserted
+        string _lastLbDisplay = string.Empty; //need work - in Undo action
+        String _operation = string.Empty; //used to insert the correct operator
         bool _entered_value = false; //used to determine if a value was inserted
-        bool _operatorInserted = false;
+        bool _operatorInserted = false; //used to determine if an operator was inserted
         public const string PLUS_OPERATOR = "+";
         public const string MINUS_OPERATOR = "-";
         public const string DIVISION_OPERATOR = "/";
         public const string MULTIPLY_OPERATOR = "x";
-
+        string _last_operator = string.Empty;
 
         #region Constructor
         /// <summary>
@@ -177,20 +177,21 @@ namespace CalculatorByMarius
 
                 switch (_operation)
                 {
-                    case PLUS_OPERATOR:
-                        TxtDisplay.Text = (_result + Double.Parse(TxtDisplay.Text)).ToString(); break;
-                    case MINUS_OPERATOR:
-                        TxtDisplay.Text = (_result - Double.Parse(TxtDisplay.Text)).ToString(); break;
-                    case MULTIPLY_OPERATOR:
-                        TxtDisplay.Text = (_result * Double.Parse(TxtDisplay.Text)).ToString(); break;
-                    case DIVISION_OPERATOR:
-                        TxtDisplay.Text = (_result / Double.Parse(TxtDisplay.Text)).ToString(); break;
+                    case PLUS_OPERATOR: TxtDisplay.Text = (_result + Double.Parse(TxtDisplay.Text)).ToString(); break;
+                    case MINUS_OPERATOR: TxtDisplay.Text = (_result - Double.Parse(TxtDisplay.Text)).ToString(); break;
+                    case MULTIPLY_OPERATOR: TxtDisplay.Text = (_result * Double.Parse(TxtDisplay.Text)).ToString(); break;
+                    case DIVISION_OPERATOR: TxtDisplay.Text = (_result / Double.Parse(TxtDisplay.Text)).ToString(); break;
                     default: break;
                 }
+                HandleNaNandInfinity(sender, e);
 
                 _result = Double.Parse(TxtDisplay.Text);
+
                 // save last result 
                 _lastResult = _result;
+
+                //save last operand
+                _last_operator = _operation;
 
                 _operation = newOperand;
 
@@ -198,6 +199,18 @@ namespace CalculatorByMarius
                 ResetLabelResult();
                 _operatorInserted = true;
             }
+            // if operator was inserted already, check it, if its different than the last one change it 
+            /*else
+            {
+                Button btn = (Button)sender;
+                string newOperand = btn.Text;
+              
+                if (newOperand != _last_operator && LbResult.Text != string.Empty)
+                {
+                    LbResult.Text.Replace(_last_operator, newOperand);
+                }
+            }*/
+
         }
 
         /// <summary>
@@ -255,6 +268,9 @@ namespace CalculatorByMarius
                 default:
                     break;
             }
+
+            HandleNaNandInfinity(sender,e);
+            
             _result = Double.Parse(TxtDisplay.Text);
             TxtDisplay.Text = _result.ToString();
             _result = 0;
@@ -316,10 +332,19 @@ namespace CalculatorByMarius
         /// </summary>
         private void ResetLabelResult()
         {
-            if (LbResult.Text.Length > 52)
+            if (LbResult.Text.Length > 50)
             {
                 LbResult.Text = string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Handle the NaN and infinity results
+        /// </summary>
+        private void HandleNaNandInfinity(object sender, EventArgs e)
+        {
+            if (TxtDisplay.Text == "NaN" || (TxtDisplay.Text == "∞") || (TxtDisplay.Text == "-∞"))
+                CButton_Click(sender, e);
         }
 
         #endregion
