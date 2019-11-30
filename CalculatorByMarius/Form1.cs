@@ -55,81 +55,85 @@ namespace CalculatorByMarius
             {
                 case Keys.D0:
                 case Keys.NumPad0:
-                    NullButton.PerformClick();
+                    NumbersEvent(NullButton, e);
                     break;
                 case Keys.D1:
                 case Keys.NumPad1:
-                    //OneButton.PerformClick();
-                    NumbersEvent(OneButton,e); // ask Dani question regarding NumbersEvent
+                    NumbersEvent(OneButton,e);
                     break;
                 case Keys.D2:
                 case Keys.NumPad2:
-                    TwoButton.PerformClick();
+                    NumbersEvent(TwoButton, e);
                     break;
                 case Keys.D3:
                 case Keys.NumPad3:
-                    ThreeButton.PerformClick();
+                    NumbersEvent(ThreeButton, e);
                     break;
                 case Keys.D4:
                 case Keys.NumPad4:
-                    FourButton.PerformClick();
+                    NumbersEvent(FourButton, e);
                     break;
                 case Keys.D5:
                 case Keys.NumPad5:
-                    FiveButton.PerformClick();
+                    NumbersEvent(FiveButton, e);
                     break;
                 case Keys.D6:
                 case Keys.NumPad6:
-                    SixButton.PerformClick();
+                    NumbersEvent(SixButton, e);
                     break;
                 case Keys.D7:
                 case Keys.NumPad7:
-                    SevenButton.PerformClick();
+                    NumbersEvent(SevenButton, e);
                     break;
                 case Keys.D8:
                 case Keys.NumPad8:
-                    EightButton.PerformClick();
                     if (e.Shift)
-                        MultiplyButton.PerformClick();
+                    {
+                        OperatorsEvent(MultiplyButton, e);
+                    }
+                    else
+                    {
+                        NumbersEvent(EightButton, e);
+                    }
                     break;
                 case Keys.D9:
                 case Keys.NumPad9:
-                    NineButton.PerformClick();
+                    NumbersEvent(NineButton, e);
                     break;
                 case Keys.Multiply:
-                    MultiplyButton.PerformClick();
+                    OperatorsEvent(MultiplyButton, e);
                     break;
                 case Keys.OemPeriod:
-                    DotButton.PerformClick();
+                    DotButton_Click(sender,e);
                     break;
                 case Keys.Back:
-                    BackspaceButton.PerformClick();
+                    BackspaceButton_Click(sender,e);
                     break;
                 case Keys.OemQuestion:
                 case Keys.Divide:
-                    DivisionButton.PerformClick();
+                    OperatorsEvent(DivisionButton,e);
                     break;
                 case Keys.OemMinus:
                 case Keys.Subtract:
-                    MinusButton.PerformClick();
+                    OperatorsEvent(MinusButton, e);
                     break;
                 case Keys.Oemplus:
                     if (e.Shift)
                     {
-                        PlusButton.PerformClick();
+                        OperatorsEvent(PlusButton, e);
                     }
                     else
                     {
-                        EqualButton.PerformClick();
+                        EqualButton_Click(sender, e);
                     }
                     break;
                 case Keys.Add:
-                    PlusButton.PerformClick();
+                    OperatorsEvent(PlusButton, e);
                     break;
                 // For the Undo button (CTRL+Z)
                 case Keys.Z:
                     if (e.Control)
-                        UndoButton.PerformClick();
+                        UndoButton_Click(sender, e);
                     break;
                 default:
                     break;
